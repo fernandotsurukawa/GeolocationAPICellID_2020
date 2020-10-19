@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         WifiInfo currentWifi = mainWifi.getConnectionInfo();
         if(currentWifi != null)
         {
-            macAddress = currentWifi.getMacAddress();
+            macAddress = getMacAddr();
             txtSSID.setText(currentWifi.getSSID());
             txtMacAddress.setText(macAddress);
         }
@@ -78,11 +82,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void getPositionByCellId(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
-                .setEndpoint("https://www.googleapis.com")
+                .setEndpoint("https://www.googleapis.com")//https://www.googleapis.com/geolocation/v1/geolocate
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
         service.geolocate("{\n" +
+                "\"homeMobileCountryCode\": "+MCCMNC.substring(0, 3)+",\n" +
+                "\"homeMobileNetworkCode\": "+MCCMNC.substring(3)+"\n" +
+                "\"radioType\": \"gsm\",\n" +
+                "\"carrier\": "+ networkOperator +"\n" +
+                "\"considerIp\": \"true\",\n" +
                 "  \"cellTowers\": [\n" +
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
@@ -103,6 +112,32 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage());
             }
         });
+    }
+
+    public static String getMacAddr() {
+        try {
+            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface nif : all) {
+                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
+
+                byte[] macBytes = nif.getHardwareAddress();
+                if (macBytes == null) {
+                    return "";
+                }
+
+                StringBuilder res1 = new StringBuilder();
+                for (byte b : macBytes) {
+                    res1.append(String.format("%02X:",b));
+                }
+
+                if (res1.length() > 0) {
+                    res1.deleteCharAt(res1.length() - 1);
+                }
+                return res1.toString();
+            }
+        } catch (Exception ex) {
+        }
+        return "02:00:00:00:00:00";
     }
 
     public void getPositionByWiFi(View view){
