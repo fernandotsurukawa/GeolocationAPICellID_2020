@@ -80,13 +80,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void getPositionByCellId(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
-                .setEndpoint("http://www.googleapis.com")
+                .setEndpoint("https://www.googleapis.com")
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
         service.geolocate("\n" +
                 "{\n" +
-                "\"radioType\": \"wcdma\"\n" +
+                "\"radioType\": \"gsm\"\n" +
                 "  \"cellTowers\": [\n" +
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         });
         Log.e("DEBUGGING", "\n" +
                 "{\n" +
-                "\"radioType\": \"wcdma\"\n" +
+                "\"radioType\": \"gsm\"\n" +
                 "  \"cellTowers\": [\n" +
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getPositionByWiFi(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
-                .setEndpoint("http://www.googleapis.com")
+                .setEndpoint("https://www.googleapis.com")
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
