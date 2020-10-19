@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -81,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
     public void getPositionByCellId(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
+                .setClient(
+                        new OkClient(new OkHttpClient())
+                )
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
@@ -151,11 +157,18 @@ public class MainActivity extends AppCompatActivity {
     public void getPositionByWiFi(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
+                .setClient(
+                        new OkClient(new OkHttpClient())
+                )
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
         service.geolocate("{\n" +
-                "  \"macAddress\": \"" + macAddress + "\"\n" +
+                "  \"wifiAccessPoints\": [\n" +
+                "    {\n" +
+                "      \"macAddress\": \""+macAddress+"\"\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
@@ -171,7 +184,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Log.e( "DEBUGGING", "{\n" +
-                "  \"macAddress\": \"" + macAddress + "\"\n" +
+                "  \"wifiAccessPoints\": [\n" +
+                "    {\n" +
+                "      \"macAddress\": \""+macAddress+"\"\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}");
     }
 
