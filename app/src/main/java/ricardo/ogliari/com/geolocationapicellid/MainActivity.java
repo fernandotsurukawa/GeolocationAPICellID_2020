@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private int lac;
     private int cid;
     private String networkOperator;
+    private String MCCMNC;
     private String macAddress;
 
     private double latitude;
@@ -34,9 +35,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView txtOperator = (TextView) findViewById(R.id.txtOperator);
         TextView txtLac = (TextView) findViewById(R.id.txtLac);
-        TextView txtMcc = (TextView) findViewById(R.id.txtMcc);
         TextView txtMnc = (TextView) findViewById(R.id.txtMnc);
+        TextView txtMcc = (TextView) findViewById(R.id.txtMcc);
         TextView txtCid = (TextView) findViewById(R.id.txtCid);
         TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
         TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
@@ -50,9 +52,14 @@ public class MainActivity extends AppCompatActivity {
                 lac = location.getLac();
                 cid = location.getCid();
 
-                txtLac.setText(new StringBuilder().append("Lac: ").append(lac).toString());
-                txtCid.setText(new StringBuilder().append("Cid: ").append(cid).toString());
-                networkOperator = t.getNetworkOperatorName();
+                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
+                txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
+                networkOperator = t.getSimOperatorName();
+                MCCMNC = t.getSimOperator();
+                txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
+                //txtOperator.setText(new StringBuilder().append("Operator Name: ").append(networkOperator).toString());
+                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCCMNC, 0, 3).toString());//mcc
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MCCMNC.substring(3)).toString());//mnc
                 //txtMcc.setText(new StringBuilder().append("MCC: ").append(networkOperator, 0, 3).toString());//MCCMNC
                 //txtMnc.setText(new StringBuilder().append("MNC: ").append(networkOperator.substring(3)).toString());//MCCMNC
             }
@@ -80,11 +87,11 @@ public class MainActivity extends AppCompatActivity {
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
                 "      \"locationAreaCode\": "+lac+",\n" +
-                "      \"mobileCountryCode\": "+networkOperator.substring(0, 3)+",\n" +
-                "      \"mobileNetworkCode\": "+networkOperator.substring(3)+"\n" +
+                "      \"mobileCountryCode\": "+MCCMNC.substring(0, 3)+",\n" +
+                "      \"mobileNetworkCode\": "+MCCMNC.substring(3)+"\n" +
                 "    }\n" +
                 "  ]\n" +
-                "}", "AIzaSyD-x8ItqL7UF3vqSMYChlRARwrXuyCqny0", new Callback<CellId>() {
+                "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
             public void success(CellId cellId, Response response) {
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         CellIdService service = retrofit.create(CellIdService.class);
         service.geolocate("{\n" +
                 "  \"macAddress\": " + macAddress +
-                "}", "AIzaSyD-x8ItqL7UF3vqSMYChlRARwrXuyCqny0", new Callback<CellId>() {
+                "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
             public void success(CellId cellId, Response response) {
