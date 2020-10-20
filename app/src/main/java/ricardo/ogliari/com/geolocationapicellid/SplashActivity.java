@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 public class SplashActivity extends AppCompatActivity {
-    private int SPLASH_TIME = 3000; //This is 3 seconds
+    private int SPLASH_TIME = 4000; //This is 3 seconds
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
