@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -12,8 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.List;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -86,12 +84,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getPositionByCellId(View view){
-        RestAdapter retrofit = new RestAdapter.Builder()
+        RestAdapter adapter = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
-                .setClient(new OkClient(new OkHttpClient()))
                 .build();
 
-        CellIdService service = retrofit.create(CellIdService.class);
+        CellIdService service = adapter.create(CellIdService.class);
         service.geolocate(
                 "{\n" +
                 "\"radioType\": \"wcdma\"\n" +
@@ -113,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.e("TESTE", "ERRO: " + error.getMessage());
+                Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
         Log.e("DEBUGGING", "{\n" +
@@ -173,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.e("TESTE", "ERRO: " + error.getMessage());
+                Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
         Log.e( "DEBUGGING", "{\n" + "  \"macAddress\": " + macAddress + "}");
