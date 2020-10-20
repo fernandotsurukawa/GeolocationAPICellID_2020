@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private int cid;
     private String networkOperator;
     private String MCCMNC;
+    private String MCC;
+    private String MNC;
     private String macAddress;
 
     private double latitude;
@@ -63,9 +65,11 @@ public class MainActivity extends AppCompatActivity {
                 txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
                 networkOperator = t.getSimOperatorName();
                 MCCMNC = t.getSimOperator();
+                MCC = String.valueOf(Integer.parseInt(MCCMNC.substring(0,3)));
+                MNC = String.valueOf(Integer.parseInt(MCCMNC.substring(3)));
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
-                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCCMNC, 0, 3).toString());//mcc
-                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MCCMNC.substring(3)).toString());//mnc
+                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCC).toString());//mcc
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MNC).toString());//mnc
                 //Log.e("DEBUGGING", "MCCMNC = " + MCCMNC);
             }
         }
@@ -84,21 +88,19 @@ public class MainActivity extends AppCompatActivity {
     public void getPositionByCellId(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
-                .setClient(
-                        new OkClient(new OkHttpClient())
-                )
+                .setClient(new OkClient(new OkHttpClient()))
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
-        service.geolocate("\n" +
+        service.geolocate(
                 "{\n" +
-                "\"radioType\": \"gsm\"\n" +
+                "\"radioType\": \"wcdma\"\n" +
                 "  \"cellTowers\": [\n" +
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
                 "      \"locationAreaCode\": "+lac+",\n" +
-                "      \"mobileCountryCode\": "+MCCMNC.substring(0, 3)+",\n" +
-                "      \"mobileNetworkCode\": "+MCCMNC.substring(3)+"\n" +
+                "      \"mobileCountryCode\": "+MCC+",\n" +
+                "      \"mobileNetworkCode\": "+MNC+"\n" +
                 "    }\n" +
                 "  ]\n" +
                 "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
@@ -114,18 +116,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage());
             }
         });
-        Log.e("DEBUGGING", "\n" +
-                "{\n" +
-                "\"radioType\": \"gsm\"\n" +
+        Log.e("DEBUGGING", "{\n" +
+                "\"radioType\": \"wcdma\"\n" +
                 "  \"cellTowers\": [\n" +
                 "    {\n" +
                 "      \"cellId\": "+cid+",\n" +
                 "      \"locationAreaCode\": "+lac+",\n" +
-                "      \"mobileCountryCode\": "+MCCMNC.substring(0, 3)+",\n" +
-                "      \"mobileNetworkCode\": "+MCCMNC.substring(3)+"\n" +
+                "      \"mobileCountryCode\": "+MCC+",\n" +
+                "      \"mobileNetworkCode\": "+MNC+"\n" +
                 "    }\n" +
                 "  ]\n" +
-                "}");
+                "}"
+        );
     }
 
     public static String getMacAddr() {
@@ -157,19 +159,10 @@ public class MainActivity extends AppCompatActivity {
     public void getPositionByWiFi(View view){
         RestAdapter retrofit = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
-                .setClient(
-                        new OkClient(new OkHttpClient())
-                )
                 .build();
 
         CellIdService service = retrofit.create(CellIdService.class);
-        service.geolocate("{\n" +
-                "  \"wifiAccessPoints\": [\n" +
-                "    {\n" +
-                "      \"macAddress\": \""+macAddress+"\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
+        service.geolocate("{\n" + "  \"macAddress\": " + macAddress + "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
             public void success(CellId cellId, Response response) {
@@ -183,13 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage());
             }
         });
-        Log.e( "DEBUGGING", "{\n" +
-                "  \"wifiAccessPoints\": [\n" +
-                "    {\n" +
-                "      \"macAddress\": \""+macAddress+"\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
+        Log.e( "DEBUGGING", "{\n" + "  \"macAddress\": " + macAddress + "}");
     }
 
     public void seeInMaps(View v){
