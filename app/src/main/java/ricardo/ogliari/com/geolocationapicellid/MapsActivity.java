@@ -20,10 +20,16 @@ public class MapsActivity extends FragmentActivity {
         setUpMapIfNeeded();
 
         Bundle extras = getIntent().getExtras();
+        //double latitude = -22.952444;
+        //double longitude =  -43.176972;
+
         double latitude = extras.getDouble("latitude");
         double longitude = extras.getDouble("longitude");
 
         LatLng latLng = new LatLng(latitude, longitude);
+        double latitudeIME = -22.955896;
+        double longitudeIME = -43.166227;
+        LatLng latLngIME = new LatLng(latitudeIME, longitudeIME);
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 latLng, 17
@@ -31,6 +37,9 @@ public class MapsActivity extends FragmentActivity {
 
         MarkerOptions mOpt = new MarkerOptions().title("Você está aqui").position(latLng);
         mMap.addMarker(mOpt);
+
+        MarkerOptions mOptIME = new MarkerOptions().title("IME").position(latLngIME);
+        mMap.addMarker(mOptIME);
     }
 
     @Override

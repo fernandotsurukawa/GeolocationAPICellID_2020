@@ -89,18 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         CellIdService service = adapter.create(CellIdService.class);
-        service.geolocate(
-                "{\n" +
-                "\"radioType\": \"wcdma\"\n" +
-                "  \"cellTowers\": [\n" +
-                "    {\n" +
-                "      \"cellId\": "+cid+",\n" +
-                "      \"locationAreaCode\": "+lac+",\n" +
-                "      \"mobileCountryCode\": "+MCC+",\n" +
-                "      \"mobileNetworkCode\": "+MNC+"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
+        service.geolocate( new CellIdRequestParam(
+                "wcdma",
+                new CellTowers(String.valueOf(cid), String.valueOf(lac), MCC, MNC)
+        ), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
 
             @Override
@@ -158,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
                 .setEndpoint("https://www.googleapis.com")
                 .build();
 
-        CellIdService service = retrofit.create(CellIdService.class);
-        service.geolocate("{\n" + "  \"macAddress\": " + macAddress + "}", "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
+        WifiService service = retrofit.create(WifiService.class);
+        service.geolocate(new WifiRequestParam(macAddress), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
             public void success(CellId cellId, Response response) {
