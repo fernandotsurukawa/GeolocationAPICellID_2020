@@ -104,7 +104,7 @@
         android:text="Ver no mapa"/>
 
     <TextView
-        android:id="@+id/txtMcc3"
+        android:id="@+id/txtAcc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="-" />

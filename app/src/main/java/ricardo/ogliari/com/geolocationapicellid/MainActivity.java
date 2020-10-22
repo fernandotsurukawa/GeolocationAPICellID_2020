@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
         TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
+        TextView txtAcc = (TextView) findViewById(R.id.txtAcc);
 
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         assert t != null;
