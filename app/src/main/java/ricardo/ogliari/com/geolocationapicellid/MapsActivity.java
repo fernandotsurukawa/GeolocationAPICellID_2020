@@ -48,7 +48,8 @@ public class MapsActivity extends FragmentActivity {
                 .fillColor(Color.parseColor("#2271cce7"));
 
         // Get back the mutable Circle
-        Circle circle = mMap.addCircle(circleOptions);
+        //Circle circle = mMap.addCircle(circleOptions);
+        mMap.addCircle(circleOptions);
 
 
 
@@ -57,6 +58,15 @@ public class MapsActivity extends FragmentActivity {
         LatLng latLng1 = new LatLng(latitude1, longitude1);
         MarkerOptions mOpt1 = new MarkerOptions().title("ERB1").position(latLng1);
         mMap.addMarker(mOpt1);
+
+        CircleOptions circleOptions1 = new CircleOptions()
+                .center(latLng1)
+                .radius(1000)
+                .strokeWidth(0)
+                .strokeColor(Color.parseColor("#2271cce7"))
+                .fillColor(Color.parseColor("#2271cce7"));
+
+        mMap.addCircle(circleOptions1);
 
         double latitude2 = -22.9109;
         double longitude2 =  -43.2019;
