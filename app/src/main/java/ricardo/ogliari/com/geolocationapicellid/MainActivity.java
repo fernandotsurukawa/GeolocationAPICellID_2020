@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -69,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
                 txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCC).toString());//mcc
                 txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MNC).toString());//mnc
-                //Log.e("DEBUGGING", "MCCMNC = " + MCCMNC);
             }
         }
 
@@ -98,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void success(CellId cellId, Response response) {
+                latitude = cellId.location.lat;
+                longitude = cellId.location.lng;
                 txtLatLng.setText(new StringBuilder().append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
             }
 
@@ -106,18 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
-        Log.e("DEBUGGING", "{\n" +
-                "\"radioType\": \"wcdma\"\n" +
-                "  \"cellTowers\": [\n" +
-                "    {\n" +
-                "      \"cellId\": "+cid+",\n" +
-                "      \"locationAreaCode\": "+lac+",\n" +
-                "      \"mobileCountryCode\": "+MCC+",\n" +
-                "      \"mobileNetworkCode\": "+MNC+"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}"
-        );
     }
 
     public static String getMacAddr() {
@@ -152,7 +140,10 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         WifiService service = retrofit.create(WifiService.class);
-        service.geolocate(new WifiRequestParam(macAddress), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
+        service.geolocate(new WifiRequestParam(macAddress),
+                "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A",
+                new Callback<CellId>()
+                {
 
             @Override
             public void success(CellId cellId, Response response) {
@@ -166,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
-        Log.e( "DEBUGGING", "{\n" + "  \"macAddress\": " + macAddress + "}");
     }
 
     public void seeInMaps(View v){
