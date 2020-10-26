@@ -24,6 +24,7 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity {
 
     private TextView txtLatLng;
+    private TextView txtAcc;
 
     private int lac;
     private int cid;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private double latitude;
     private double longitude;
+    private double accuracy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
         TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
-        TextView txtAcc = (TextView) findViewById(R.id.txtAcc);
+        txtAcc = (TextView) findViewById(R.id.txtAcc);
 
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         assert t != null;
@@ -98,7 +100,9 @@ public class MainActivity extends AppCompatActivity {
             public void success(CellId cellId, Response response) {
                 latitude = cellId.location.lat;
                 longitude = cellId.location.lng;
-                txtLatLng.setText(new StringBuilder().append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
+                accuracy = cellId.accuracy;
+                txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
+                txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
             }
 
             @Override
@@ -149,7 +153,9 @@ public class MainActivity extends AppCompatActivity {
             public void success(CellId cellId, Response response) {
                 latitude = cellId.location.lat;
                 longitude = cellId.location.lng;
-                txtLatLng.setText(new StringBuilder().append(latitude).append(", ").append(longitude).toString());
+                accuracy = cellId.accuracy;
+                txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
+                txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
             }
 
             @Override
@@ -163,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
+        intent.putExtra("accuracy", accuracy);
         startActivity(intent);
     }
 }

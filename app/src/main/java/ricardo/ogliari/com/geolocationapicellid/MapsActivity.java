@@ -1,11 +1,14 @@
 package ricardo.ogliari.com.geolocationapicellid;
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -25,6 +28,7 @@ public class MapsActivity extends FragmentActivity {
 
         double latitude = extras.getDouble("latitude");
         double longitude = extras.getDouble("longitude");
+        double accuracy = extras.getDouble("accuracy");
 
         LatLng latLng = new LatLng(latitude, longitude);
 
@@ -34,6 +38,19 @@ public class MapsActivity extends FragmentActivity {
 
         MarkerOptions mOpt = new MarkerOptions().title("Você está aqui").position(latLng);
         mMap.addMarker(mOpt);
+
+        // Instantiates a new CircleOptions object and defines the center and radius
+        CircleOptions circleOptions = new CircleOptions()
+                .center(latLng)
+                .radius(accuracy)
+                .strokeWidth(0)
+                .strokeColor(Color.parseColor("#2271cce7"))
+                .fillColor(Color.parseColor("#2271cce7"));
+
+        // Get back the mutable Circle
+        Circle circle = mMap.addCircle(circleOptions);
+
+
 
         double latitude1 = -22.9169;
         double longitude1 =  -43.1947;
