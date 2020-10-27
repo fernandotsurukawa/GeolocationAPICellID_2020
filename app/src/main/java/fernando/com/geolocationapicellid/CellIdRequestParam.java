@@ -5,7 +5,6 @@ public class CellIdRequestParam {
     Boolean considerIp;
     CellTowers cellTower;
 
-
     CellIdRequestParam(String radioType, Boolean considerIp, CellTowers cellTower)
     {
         this.radioType = radioType;
