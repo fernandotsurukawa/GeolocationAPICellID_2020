@@ -1,4 +1,4 @@
-package ricardo.ogliari.com.geolocationapicellid;
+package fernando.com.geolocationapicellid;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,8 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private int lac;
     private int cid;
-    private String networkOperator;
-    private String MCCMNC;
     private String MCC;
     private String MNC;
     private String macAddress;
@@ -53,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
         txtAcc = (TextView) findViewById(R.id.txtAcc);
 
-        final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        final TelephonyManager t = (TelephonyManager) getSystemService(
+                                                Context.TELEPHONY_SERVICE);
         assert t != null;
         if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
             final GsmCellLocation location = (GsmCellLocation) t.getCellLocation();
@@ -63,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
                 txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
                 txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
-                networkOperator = t.getSimOperatorName();
-                MCCMNC = t.getSimOperator();
+                String networkOperator = t.getSimOperatorName();
+                String MCCMNC = t.getSimOperator();
                 MCC = String.valueOf(Integer.parseInt(MCCMNC.substring(0,3)));
                 MNC = String.valueOf(Integer.parseInt(MCCMNC.substring(3)));
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());

@@ -1,4 +1,4 @@
-package ricardo.ogliari.com.geolocationapicellid;
+package fernando.com.geolocationapicellid;
 
 public class CellTowers {
     String cellID;

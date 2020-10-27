@@ -1,4 +1,4 @@
-package ricardo.ogliari.com.geolocationapicellid;
+package fernando.com.geolocationapicellid;
 
 /**
  * Created by ricardo on 18/09/2015.

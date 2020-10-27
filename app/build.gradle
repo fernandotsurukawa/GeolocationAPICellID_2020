@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "ricardo.ogliari.com.geolocationapicellid"
+        applicationId "fernando.com.geolocationapicellid"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1

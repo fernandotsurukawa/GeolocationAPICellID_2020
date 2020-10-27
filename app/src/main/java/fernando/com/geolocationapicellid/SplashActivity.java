@@ -1,4 +1,4 @@
-package ricardo.ogliari.com.geolocationapicellid;
+package fernando.com.geolocationapicellid;
 
 import android.content.Intent;
 import android.os.Handler;
