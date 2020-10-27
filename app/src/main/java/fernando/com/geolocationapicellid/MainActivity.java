@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
 
         CellIdService service = adapter.create(CellIdService.class);
         service.geolocate( new CellIdRequestParam(
-                "wcdma",
+                "gsm",
+                true,
                 new CellTowers(String.valueOf(cid), String.valueOf(lac), MCC, MNC)
         ), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
