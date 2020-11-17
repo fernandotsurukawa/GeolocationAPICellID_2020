@@ -14,4 +14,3 @@ public interface WifiService {
              @Query("key") String key,
              Callback<CellId> callback);
 }
-
