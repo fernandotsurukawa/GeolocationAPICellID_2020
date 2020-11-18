@@ -4,31 +4,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.telephony.CellIdentityLte;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoLte;
 import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import java.net.NetworkInterface;
 import java.util.Collections;
 import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
+    private int dbm;
     private TextView txtLatLng;
     private TextView txtAcc;
     private int lac;
     private int cid;
-    private String MCC;
-    private String MNC;
+    private int mcc;
+    private int mnc;
     private String macAddress;
     private String networkOperator;
-    private String MCCMNC;
     private double latitude;
     private double longitude;
     private double accuracy;
@@ -42,16 +46,34 @@ public class MainActivity extends AppCompatActivity {
         TextView txtMnc = (TextView) findViewById(R.id.txtMnc);
         TextView txtMcc = (TextView) findViewById(R.id.txtMcc);
         TextView txtCid = (TextView) findViewById(R.id.txtCid);
+        TextView txtSNR = (TextView) findViewById(R.id.txtSNR);
         TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
         TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
         txtAcc = (TextView) findViewById(R.id.txtAcc);
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         assert t != null;
-        if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
-            final GsmCellLocation location = (GsmCellLocation) t.getCellLocation();
-            if (location != null) {
-                lac = location.getLac();
+        if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) { // Essa verificacao eh vestigial, nao serve pra nada
+            final List<CellInfo> cellInfoList = t.getAllCellInfo();
+            if (cellInfoList != null) {
+                Log.e("CELL INFO DEBUGGING", String.valueOf(cellInfoList));
+                CellInfoLte cellInfoLte = (CellInfoLte) cellInfoList.get(0);
+                CellIdentityLte cellIdentityLte = cellInfoLte.getCellIdentity();
+                cid = cellIdentityLte.getCi();
+                lac = cellIdentityLte.getTac();
+                mcc = cellIdentityLte.getMcc();
+                mnc = cellIdentityLte.getMnc();
+                networkOperator = t.getSimOperatorName();
+                dbm = cellInfoLte.getCellSignalStrength().getDbm();
+
+                txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
+                txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
+                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
+                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());//mcc
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());//mnc
+                txtSNR.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(dbm).toString());//mnc
+
+                /*lac = location.getLac();
                 cid = location.getCid();
                 txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
                 txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
@@ -61,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 MNC = String.valueOf(Integer.parseInt(MCCMNC.substring(3)));
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
                 txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCC).toString());//mcc
-                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MNC).toString());//mnc
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MNC).toString());//mnc*/
             }
         }
 
@@ -82,9 +104,9 @@ public class MainActivity extends AppCompatActivity {
 
         CellIdService service = adapter.create(CellIdService.class);
         service.geolocate( new CellIdRequestParam(
-                "wcdma",
+                "lte",
                 true,
-                new CellTowers(String.valueOf(cid), String.valueOf(lac), MCC, MNC)
+                new CellTowers(String.valueOf(cid), String.valueOf(lac), String.valueOf(mcc), String.valueOf(mnc))
         ), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
 
             @Override
