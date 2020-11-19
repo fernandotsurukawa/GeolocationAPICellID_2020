@@ -2,9 +2,11 @@ package fernando.com.geolocationapicellid;
 
 public class WifiRequestParam {
     String macAddress;
+    Boolean considerIp;
 
-    WifiRequestParam(String macAddress)
+    WifiRequestParam(Boolean considerIp, String macAddress)
     {
+        this.considerIp = considerIp;
         this.macAddress = macAddress;
     }
 }

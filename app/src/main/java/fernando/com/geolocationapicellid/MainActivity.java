@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.net.NetworkInterface;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,18 +25,24 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private int dbm;
     private TextView txtLatLng;
     private TextView txtAcc;
     private int lac;
     private int cid;
     private int mcc;
     private int mnc;
+    private int dbm;
     private String macAddress;
-    private String networkOperator;
     private double latitude;
     private double longitude;
     private double accuracy;
+    private List<Integer> cidList = new ArrayList<>();
+    private List<Integer> lacList = new ArrayList<>();
+    private List<Integer> mccList = new ArrayList<>();
+    private List<Integer> mncList = new ArrayList<>();
+    private List<Integer> dbmList = new ArrayList<>();
+
+    private static final int UNAVAILABLE = 2147483647;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         TextView txtMnc = (TextView) findViewById(R.id.txtMnc);
         TextView txtMcc = (TextView) findViewById(R.id.txtMcc);
         TextView txtCid = (TextView) findViewById(R.id.txtCid);
-        TextView txtSNR = (TextView) findViewById(R.id.txtSNR);
+        TextView txtDbm = (TextView) findViewById(R.id.txtDbm);
         TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
         TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
@@ -57,33 +64,49 @@ public class MainActivity extends AppCompatActivity {
             final List<CellInfo> cellInfoList = t.getAllCellInfo();
             if (cellInfoList != null) {
                 Log.e("CELL INFO DEBUGGING", String.valueOf(cellInfoList));
-                CellInfoLte cellInfoLte = (CellInfoLte) cellInfoList.get(0);
-                CellIdentityLte cellIdentityLte = cellInfoLte.getCellIdentity();
-                cid = cellIdentityLte.getCi();
-                lac = cellIdentityLte.getTac();
-                mcc = cellIdentityLte.getMcc();
-                mnc = cellIdentityLte.getMnc();
-                networkOperator = t.getSimOperatorName();
-                dbm = cellInfoLte.getCellSignalStrength().getDbm();
+
+                String networkOperator = t.getSimOperatorName();
+
+                List<CellInfoLte> cellInfoLteList = (List<CellInfoLte>)(Object)cellInfoList;
+
+                for(CellInfoLte cellInfoLte: cellInfoLteList) {
+                    CellIdentityLte cellIdentityLte = cellInfoLte.getCellIdentity();
+
+                    if(cellIdentityLte.getCi() != UNAVAILABLE) { //informacoes so sao compartilhadas se a torre eh compativel com a operadora
+                        cidList.add(cellIdentityLte.getCi());
+                        lacList.add(cellIdentityLte.getTac());
+                        mccList.add(cellIdentityLte.getMcc());
+                        mncList.add(cellIdentityLte.getMnc());
+                        dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
+                    }
+                    /*else{
+                        cidList.add(0);
+                        lacList.add(0);
+                        mccList.add(0);
+                        mncList.add(0);
+                    }*/
+                    //dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
+                }
 
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
-                txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
-                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
-                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());//mcc
-                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());//mnc
-                txtSNR.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(dbm).toString());//mnc
 
-                /*lac = location.getLac();
-                cid = location.getCid();
-                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
+                /*txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(Arrays.toString(cidList.toArray())));
+                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(Arrays.toString(lacList.toArray())));
+                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(Arrays.toString(mccList.toArray())));
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(Arrays.toString(mncList.toArray())));
+                txtDbm.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(Arrays.toString(dbmList.toArray())));*/
+
+                cid = cidList.get(0);
+                lac = lacList.get(0);
+                mcc = mccList.get(0);
+                mnc = mncList.get(0);
+                dbm = dbmList.get(0);
+
                 txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
-                networkOperator = t.getSimOperatorName();
-                MCCMNC = t.getSimOperator();
-                MCC = String.valueOf(Integer.parseInt(MCCMNC.substring(0,3)));
-                MNC = String.valueOf(Integer.parseInt(MCCMNC.substring(3)));
-                txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
-                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(MCC).toString());//mcc
-                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(MNC).toString());//mnc*/
+                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
+                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());
+                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());
+                txtDbm.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(dbm).toString());
             }
         }
 
@@ -155,7 +178,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         WifiService service = retrofit.create(WifiService.class);
-        service.geolocate(new WifiRequestParam(macAddress),
+        service.geolocate(new WifiRequestParam(
+                true,
+                        macAddress),
                 "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A",
                 new Callback<CellId>()
                 {
