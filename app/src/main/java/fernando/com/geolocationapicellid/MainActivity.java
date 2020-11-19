@@ -2,8 +2,6 @@ package fernando.com.geolocationapicellid;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.CellIdentityLte;
@@ -14,9 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.net.NetworkInterface;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
@@ -27,20 +23,36 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity {
     private TextView txtLatLng;
     private TextView txtAcc;
+    private TextView txtLatLng2;
+    private TextView txtAcc2;
+    private TextView txtStatus2;
+    private TextView txtBalance2;
+    private TextView txtAddress2;
+    private TextView txtMessage2;
     private int lac;
     private int cid;
     private int mcc;
     private int mnc;
     private int dbm;
-    private String macAddress;
+    private int pci;
     private double latitude;
     private double longitude;
     private double accuracy;
+
+    private String status2;
+    private int balance2;
+    private float latitude2;
+    private float longitude2;
+    private int accuracy2;
+    private String address2;
+    private String message2;
+
     private List<Integer> cidList = new ArrayList<>();
     private List<Integer> lacList = new ArrayList<>();
     private List<Integer> mccList = new ArrayList<>();
     private List<Integer> mncList = new ArrayList<>();
     private List<Integer> dbmList = new ArrayList<>();
+    private List<Integer> pciList = new ArrayList<>();
 
     private static final int UNAVAILABLE = 2147483647;
 
@@ -54,10 +66,15 @@ public class MainActivity extends AppCompatActivity {
         TextView txtMcc = (TextView) findViewById(R.id.txtMcc);
         TextView txtCid = (TextView) findViewById(R.id.txtCid);
         TextView txtDbm = (TextView) findViewById(R.id.txtDbm);
-        TextView txtMacAddress = (TextView) findViewById(R.id.txtMacAddress);
-        TextView txtSSID = (TextView) findViewById(R.id.txtSSID);
+        TextView txtPci = (TextView) findViewById(R.id.txtPci);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
         txtAcc = (TextView) findViewById(R.id.txtAcc);
+        txtLatLng2 = (TextView) findViewById(R.id.txtLatLng2);
+        txtAcc2 = (TextView) findViewById(R.id.txtAcc2);
+        txtStatus2 = (TextView) findViewById(R.id.txtStatus2);
+        txtBalance2 = (TextView) findViewById(R.id.txtBalance2);
+        txtAddress2 = (TextView) findViewById(R.id.txtAddress2);
+        txtMessage2 = (TextView) findViewById(R.id.txtMessage2);
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         assert t != null;
         if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) { // Essa verificacao eh vestigial, nao serve pra nada
@@ -78,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         mccList.add(cellIdentityLte.getMcc());
                         mncList.add(cellIdentityLte.getMnc());
                         dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
+                        pciList.add(cellIdentityLte.getPci());
                     }
                     /*else{
                         cidList.add(0);
@@ -101,22 +119,15 @@ public class MainActivity extends AppCompatActivity {
                 mcc = mccList.get(0);
                 mnc = mncList.get(0);
                 dbm = dbmList.get(0);
+                pci = pciList.get(0);
 
                 txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
                 txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
                 txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());
                 txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());
                 txtDbm.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(dbm).toString());
+                txtPci.setText(new StringBuilder().append("PCI (PCI): ").append(pci).toString());
             }
-        }
-
-        WifiManager mainWifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        WifiInfo currentWifi = mainWifi.getConnectionInfo();
-        if(currentWifi != null)
-        {
-            macAddress = getMacAddr().toLowerCase();
-            txtSSID.setText(currentWifi.getSSID());
-            txtMacAddress.setText(macAddress);
         }
     }
 
@@ -146,57 +157,48 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
-    }
 
-    public static String getMacAddr() {
-        try {
-            List<NetworkInterface> all = Collections.list(NetworkInterface.getNetworkInterfaces());
-            for (NetworkInterface nif : all) {
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
 
-                byte[] macBytes = nif.getHardwareAddress();
-                if (macBytes == null) {
-                    return "";
-                }
-                StringBuilder res1 = new StringBuilder();
-                for (byte b : macBytes) {
-                    res1.append(String.format("%02X:",b));
-                }
-                if (res1.length() > 0) {
-                    res1.deleteCharAt(res1.length() - 1);
-                }
-                return res1.toString();
-            }
-        } catch (Exception ex) {
-        }
-        return "02:00:00:00:00:00";
-    }
-
-    public void getPositionByWiFi(View view){
-        RestAdapter retrofit = new RestAdapter.Builder()
-                .setEndpoint("https://www.googleapis.com")
+        RestAdapter adapter2 = new RestAdapter.Builder()
+                .setEndpoint("https://us1.unwiredlabs.com")
                 .build();
 
-        WifiService service = retrofit.create(WifiService.class);
-        service.geolocate(new WifiRequestParam(
-                true,
-                        macAddress),
-                "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A",
-                new Callback<CellId>()
-                {
+        CellIdService2 service2 = adapter2.create(CellIdService2.class);
+        service2.geolocate( new CellIdRequestParam2(
+                "pk.f94f86c6f75dbc00fbe0c2fa8932adc5",
+                "lte",
+                String.valueOf(mcc),
+                String.valueOf(mnc),
+                new CellTowers2(String.valueOf(lac), String.valueOf(cid), String.valueOf(pci)),"1"),
+                new Callback<Location2>() {
 
             @Override
-            public void success(CellId cellId, Response response) {
-                latitude = cellId.location.lat;
-                longitude = cellId.location.lng;
-                accuracy = cellId.accuracy;
-                txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
-                txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
+            public void success(Location2 location2, Response response) {
+                status2 = location2.status;
+                balance2 = location2.balance;
+                latitude2 = location2.lat;
+                longitude2 = location2.lon;
+                accuracy2 = location2.accuracy;
+                address2 = location2.address;
+                message2 = location2.message;
+                Log.e("DEBUGGING OPEN CELLID:", "\n"+ new CellIdRequestParam2(
+                        "pk.f94f86c6f75dbc00fbe0c2fa8932adc5",
+                        "lte",
+                        String.valueOf(mcc),
+                        String.valueOf(mnc),
+                        new CellTowers2(String.valueOf(lac), String.valueOf(cid), String.valueOf(pci)), "1"));
+
+                txtLatLng2.setText(new StringBuilder().append("Lat, Lng = ").append(location2.lat).append(", ").append(location2.lon).toString());
+                txtAcc2.setText(new StringBuilder().append("Precisão = ").append(location2.accuracy).toString());
+                txtStatus2.setText(new StringBuilder().append("Status: ").append(status2).toString());
+                txtBalance2.setText(new StringBuilder().append("Balanço: ").append(balance2).toString());
+                txtAddress2.setText(new StringBuilder().append("Endereco: ").append(address2).toString());
+                txtMessage2.setText(new StringBuilder().append("Mensagem: ").append(message2).toString());
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
+                Log.e("ERROR OPEN CELLID", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
     }

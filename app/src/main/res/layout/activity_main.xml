@@ -45,6 +45,12 @@
         android:layout_height="wrap_content"
         android:text="-" />
 
+    <TextView
+        android:id="@+id/txtPci"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
     <Button
         android:onClick="getPositionByCellId"
         android:layout_width="match_parent"
@@ -59,29 +65,23 @@
         android:background="#000000"/>
 
     <TextView
-        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Informações Wi-Fi"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="Resultado Google Geolocation"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold" />
 
     <TextView
-        android:text="-"
-        android:id="@+id/txtSSID"
+        android:id="@+id/txtLatLng"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:text="-"
-        android:id="@+id/txtMacAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:onClick="getPositionByWiFi"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Buscar Posiçao"/>
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtAcc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-" />
 
     <View
         android:layout_marginTop="20dp"
@@ -91,28 +91,61 @@
         android:background="#000000"/>
 
     <TextView
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Resultado Open Cellid"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Resultado" />
+        android:textStyle="bold" />
 
     <TextView
-        android:text="-"
-        android:id="@+id/txtLatLng"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:id="@+id/txtLatLng2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtAcc2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtStatus2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtBalance2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtAddress2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/txtMessage2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:background="#000000" />
 
     <Button
         android:onClick="seeInMaps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver no mapa"/>
-
-    <TextView
-        android:id="@+id/txtAcc"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="-" />
 
 </LinearLayout>
