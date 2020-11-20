@@ -1,8 +1,11 @@
 package fernando.com.geolocationapicellid;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.CellIdentityLte;
 import android.telephony.CellInfo;
@@ -20,7 +23,13 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+
 public class MainActivity extends AppCompatActivity {
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private TextView txtLatLng;
     private TextView txtAcc;
     private TextView txtIpFlag;
@@ -48,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     private int accuracy2;
     private String address2;
     private String message2;
+
+    private Location locationGps;
+    private double latitudeGps;
+    private double longitudeGps;
 
     private List<Integer> cidList = new ArrayList<>();
     private List<Integer> lacList = new ArrayList<>();
@@ -87,12 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
                 String networkOperator = t.getSimOperatorName();
 
-                List<CellInfoLte> cellInfoLteList = (List<CellInfoLte>)(Object)cellInfoList;
+                List<CellInfoLte> cellInfoLteList = (List<CellInfoLte>) (Object) cellInfoList;
 
-                for(CellInfoLte cellInfoLte: cellInfoLteList) {
+                for (CellInfoLte cellInfoLte : cellInfoLteList) {
                     CellIdentityLte cellIdentityLte = cellInfoLte.getCellIdentity();
 
-                    if(cellIdentityLte.getCi() != UNAVAILABLE) {
+                    if (cellIdentityLte.getCi() != UNAVAILABLE) {
                         cidList.add(cellIdentityLte.getCi());
                         lacList.add(cellIdentityLte.getTac());
                         mccList.add(cellIdentityLte.getMcc());
@@ -119,6 +132,43 @@ public class MainActivity extends AppCompatActivity {
                 txtPci.setText(new StringBuilder().append("PCI (PCI): ").append(pci).toString());
             }
         }
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //locationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        LocationListener listener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(Location locationGps) {
+                // A new location update is received.  Do something useful with it.  In this case,
+                // we're sending the update to a handler which then updates the UI with the new
+                // location.
+                latitudeGps = locationGps.getLatitude();
+                longitudeGps = locationGps.getLatitude();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            @Override
+            public void onProviderEnabled(String provider) {}
+
+            @Override
+            public void onProviderDisabled(String provider) {}
+        };
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, listener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, listener);
+        locationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
     public void getPositionByCellId(View view){
@@ -205,8 +255,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("accuracy", accuracy);
-        intent.putExtra("latopen", latitude2);
-        intent.putExtra("longopen", longitude2);
+        intent.putExtra("latitude2", latitude2);
+        intent.putExtra("longitude2", longitude2);
+        intent.putExtra("latitudeGps", locationGps.getLatitude());
+        intent.putExtra("longitudeGps", locationGps.getLongitude());
         startActivity(intent);
     }
 }

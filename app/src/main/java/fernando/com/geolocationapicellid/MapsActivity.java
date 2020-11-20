@@ -27,11 +27,14 @@ public class MapsActivity extends FragmentActivity {
         double latitude = extras.getDouble("latitude");
         double longitude = extras.getDouble("longitude");
         double accuracy = extras.getDouble("accuracy");
-        double latitude2 = extras.getDouble("latopen");
-        double longitude2 = extras.getDouble("longopen");
+        double latitude2 = extras.getDouble("latitude2");
+        double longitude2 = extras.getDouble("longitude2");
+        double latitudeGps = extras.getDouble("latitudeGps");
+        double longitudeGps = extras.getDouble("longitudeGps");
 
         LatLng latLng = new LatLng(latitude, longitude);
         LatLng latLng2 = new LatLng(latitude2, longitude2);
+        LatLng latLngGps = new LatLng(latitudeGps, longitudeGps);
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                 latLng, 17
@@ -42,6 +45,9 @@ public class MapsActivity extends FragmentActivity {
 
         MarkerOptions mOpt2 = new MarkerOptions().title("OpenCelliD").position(latLng2);
         mMap.addMarker(mOpt2);
+
+        MarkerOptions mOptGps = new MarkerOptions().title("GPS").position(latLngGps);
+        mMap.addMarker(mOptGps);
 
         double latitudeCasa = -22.952722911612984;
         double longitudeCasa =  -43.17694158745668;
