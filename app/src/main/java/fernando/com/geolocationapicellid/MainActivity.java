@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String status2;
     private int balance2;
-    private float latitude2;
-    private float longitude2;
+    private double latitude2;
+    private double longitude2;
     private int accuracy2;
     private String address2;
     private String message2;
@@ -205,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("accuracy", accuracy);
+        intent.putExtra("latopen", latitude2);
+        intent.putExtra("longopen", longitude2);
         startActivity(intent);
     }
 }
