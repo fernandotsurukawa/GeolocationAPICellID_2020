@@ -125,13 +125,14 @@ public class MainActivity extends AppCompatActivity {
                 txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
                 txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());
                 txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());
-                txtDbm.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(dbm).toString());
+                txtDbm.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(dbm).toString());
                 txtPci.setText(new StringBuilder().append("PCI (PCI): ").append(pci).toString());
             }
         }
     }
 
     public void getPositionByCellId(View view){
+
         RestAdapter adapter = new RestAdapter.Builder()
                 .setEndpoint("https://www.googleapis.com")
                 .build();
@@ -165,12 +166,13 @@ public class MainActivity extends AppCompatActivity {
 
         CellIdService2 service2 = adapter2.create(CellIdService2.class);
         service2.geolocate( new CellIdRequestParam2(
-                "pk.f94f86c6f75dbc00fbe0c2fa8932adc5",
-                "lte",
-                String.valueOf(mcc),
-                String.valueOf(mnc),
-                new CellTowers2(String.valueOf(lac), String.valueOf(cid), String.valueOf(pci)),"1"),
-                new Callback<Location2>() {
+                    "pk.f94f86c6f75dbc00fbe0c2fa8932adc5",
+                    "lte",
+                    mcc,
+                    mnc,
+                new Cells[]{new Cells(lac, cid, pci,dbm)},
+                    1),
+                    new Callback<Location2>() {
 
             @Override
             public void success(Location2 location2, Response response) {
@@ -181,12 +183,6 @@ public class MainActivity extends AppCompatActivity {
                 accuracy2 = location2.accuracy;
                 address2 = location2.address;
                 message2 = location2.message;
-                Log.e("DEBUGGING OPEN CELLID:", "\n"+ new CellIdRequestParam2(
-                        "pk.f94f86c6f75dbc00fbe0c2fa8932adc5",
-                        "lte",
-                        String.valueOf(mcc),
-                        String.valueOf(mnc),
-                        new CellTowers2(String.valueOf(lac), String.valueOf(cid), String.valueOf(pci)), "1"));
 
                 txtLatLng2.setText(new StringBuilder().append("Lat, Lng = ").append(location2.lat).append(", ").append(location2.lon).toString());
                 txtAcc2.setText(new StringBuilder().append("Precisão = ").append(location2.accuracy).toString());
