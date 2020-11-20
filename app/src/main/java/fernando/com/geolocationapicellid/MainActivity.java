@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
     private List<Integer> dbmList = new ArrayList<>();
     private List<Integer> pciList = new ArrayList<>();
 
+    private static final String TAG = "MainActivity";
+
     private static final int UNAVAILABLE = 2147483647;
 
     @Override
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         txtMessage2 = (TextView) findViewById(R.id.txtMessage2);
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         assert t != null;
-        if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) { // Essa verificacao eh vestigial, nao serve pra nada
+        if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
             final List<CellInfo> cellInfoList = t.getAllCellInfo();
             if (cellInfoList != null) {
                 Log.e("CELL INFO DEBUGGING", String.valueOf(cellInfoList));
@@ -90,30 +92,17 @@ public class MainActivity extends AppCompatActivity {
                 for(CellInfoLte cellInfoLte: cellInfoLteList) {
                     CellIdentityLte cellIdentityLte = cellInfoLte.getCellIdentity();
 
-                    if(cellIdentityLte.getCi() != UNAVAILABLE) { //informacoes so sao compartilhadas se a torre eh compativel com a operadora
+                    if(cellIdentityLte.getCi() != UNAVAILABLE) {
                         cidList.add(cellIdentityLte.getCi());
                         lacList.add(cellIdentityLte.getTac());
                         mccList.add(cellIdentityLte.getMcc());
                         mncList.add(cellIdentityLte.getMnc());
-                        dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
+                        dbmList.add(cellInfoLte.getCellSignalStrength().getDbm());
                         pciList.add(cellIdentityLte.getPci());
                     }
-                    /*else{ //como so estamos trabalhando com uma ERB por vez, apenas o primeiro item da lista eh utilizado
-                        cidList.add(0);
-                        lacList.add(0);
-                        mccList.add(0);
-                        mncList.add(0);
-                    }*/
-                    //dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
                 }
 
                 txtOperator.setText(new StringBuilder().append("Nome da operadora: ").append(networkOperator).toString());
-
-                /*txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(Arrays.toString(cidList.toArray())));
-                txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(Arrays.toString(lacList.toArray())));
-                txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(Arrays.toString(mccList.toArray())));
-                txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(Arrays.toString(mncList.toArray())));
-                txtDbm.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(Arrays.toString(dbmList.toArray())));*/
 
                 cid = cidList.get(0);
                 lac = lacList.get(0);
@@ -142,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         final CellTowers[] cellTowers = new CellTowers[]{new CellTowers(cid, lac, mcc, mnc, dbm)};
         final CellIdRequestParam cellIdRequestParam_considerIpFalse = new CellIdRequestParam("lte", false, cellTowers);
         final CellIdRequestParam cellIdRequestParam_considerIpTrue = new CellIdRequestParam("lte", true, cellTowers);
-        //Log.e("REQUEST", String.valueOf(cellIdRequestParam));
         service.geolocate( cellIdRequestParam_considerIpFalse , "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
             @Override
             public void success(CellId cellId, Response response) {
@@ -153,14 +141,11 @@ public class MainActivity extends AppCompatActivity {
                 txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
                 txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
                 txtIpFlag.setText(new StringBuilder().append("IP_FLAG = ").append(ipFlag).toString());
-                //Log.e("OVERRIDE SUCCESS","JUST FOR DEBUGGING");
             }
             @Override
             public void failure(RetrofitError error) {
                 ipFlag = true;
                 txtIpFlag.setText(new StringBuilder().append("IP_FLAG = ").append(ipFlag).toString());
-                //Log.e("ERROR1", error.getMessage() + "\nURL: " + error.getUrl());
-                //Log.e("OVERRIDE FAILURE","JUST FOR DEBUGGING");
                 service.geolocate( cellIdRequestParam_considerIpTrue , "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
                     @Override
                     public void success(CellId cellId, Response response) {
@@ -169,12 +154,10 @@ public class MainActivity extends AppCompatActivity {
                         accuracy = cellId.accuracy;
                         txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
                         txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
-                        //Log.e("OVERRIDE SUCCESS","JUST FOR DEBUGGING");
                     }
                     @Override
                     public void failure(RetrofitError error) {
-                        //Log.e("ERROR1", error.getMessage() + "\nURL: " + error.getUrl());
-                        //Log.e("OVERRIDE FAILURE","JUST FOR DEBUGGING");
+                        Log.e(TAG, error.getMessage() + "\nURL: " + error.getUrl());
                     }
                 });
             }
@@ -212,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void failure(RetrofitError error) {
-                Log.e("ERROR", error.getMessage() + "\nURL: " + error.getUrl());
+                Log.e(TAG, error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
     }
