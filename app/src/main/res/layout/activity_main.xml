@@ -77,6 +77,12 @@
         android:text="-" />
 
     <TextView
+        android:id="@+id/txtIpFlag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="-" />
+
+    <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,18 +98,6 @@
 
     <TextView
         android:id="@+id/txtAcc2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="-" />
-
-    <TextView
-        android:id="@+id/txtStatus2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="-" />
-
-    <TextView
-        android:id="@+id/txtBalance2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="-" />

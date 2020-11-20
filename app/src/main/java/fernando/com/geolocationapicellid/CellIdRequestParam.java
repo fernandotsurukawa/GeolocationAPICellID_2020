@@ -3,12 +3,12 @@ package fernando.com.geolocationapicellid;
 public class CellIdRequestParam {
     String radioType;
     Boolean considerIp;
-    CellTowers cellTower;
+    CellTowers[] cellTowers;
 
-    CellIdRequestParam(String radioType, Boolean considerIp, CellTowers cellTower)
+    CellIdRequestParam(String radioType, Boolean considerIp, CellTowers[] cellTowers)
     {
         this.radioType = radioType;
         this.considerIp = considerIp;
-        this.cellTower = cellTower;
+        this.cellTowers = cellTowers;
     }
 }

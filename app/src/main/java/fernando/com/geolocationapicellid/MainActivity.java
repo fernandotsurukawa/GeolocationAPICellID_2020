@@ -23,6 +23,7 @@ import retrofit.client.Response;
 public class MainActivity extends AppCompatActivity {
     private TextView txtLatLng;
     private TextView txtAcc;
+    private TextView txtIpFlag;
     private TextView txtLatLng2;
     private TextView txtAcc2;
     private TextView txtStatus2;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private double latitude;
     private double longitude;
     private double accuracy;
+    private boolean ipFlag;
 
     private String status2;
     private int balance2;
@@ -69,10 +71,9 @@ public class MainActivity extends AppCompatActivity {
         TextView txtPci = (TextView) findViewById(R.id.txtPci);
         txtLatLng = (TextView) findViewById(R.id.txtLatLng);
         txtAcc = (TextView) findViewById(R.id.txtAcc);
+        txtIpFlag = (TextView) findViewById(R.id.txtIpFlag);
         txtLatLng2 = (TextView) findViewById(R.id.txtLatLng2);
         txtAcc2 = (TextView) findViewById(R.id.txtAcc2);
-        txtStatus2 = (TextView) findViewById(R.id.txtStatus2);
-        txtBalance2 = (TextView) findViewById(R.id.txtBalance2);
         txtAddress2 = (TextView) findViewById(R.id.txtAddress2);
         txtMessage2 = (TextView) findViewById(R.id.txtMessage2);
         final TelephonyManager t = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         dbmList.add(cellInfoLte.getCellSignalStrength().getDbm()); //informacoes de potencia sao fornecidas sempre
                         pciList.add(cellIdentityLte.getPci());
                     }
-                    /*else{
+                    /*else{ //como so estamos trabalhando com uma ERB por vez, apenas o primeiro item da lista eh utilizado
                         cidList.add(0);
                         lacList.add(0);
                         mccList.add(0);
@@ -137,28 +138,47 @@ public class MainActivity extends AppCompatActivity {
                 .setEndpoint("https://www.googleapis.com")
                 .build();
 
-        CellIdService service = adapter.create(CellIdService.class);
-        service.geolocate( new CellIdRequestParam(
-                "lte",
-                true,
-                new CellTowers(String.valueOf(cid), String.valueOf(lac), String.valueOf(mcc), String.valueOf(mnc))
-        ), "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
-
+        final CellIdService service = adapter.create(CellIdService.class);
+        final CellTowers[] cellTowers = new CellTowers[]{new CellTowers(cid, lac, mcc, mnc, dbm)};
+        final CellIdRequestParam cellIdRequestParam_considerIpFalse = new CellIdRequestParam("lte", false, cellTowers);
+        final CellIdRequestParam cellIdRequestParam_considerIpTrue = new CellIdRequestParam("lte", true, cellTowers);
+        //Log.e("REQUEST", String.valueOf(cellIdRequestParam));
+        service.geolocate( cellIdRequestParam_considerIpFalse , "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
             @Override
             public void success(CellId cellId, Response response) {
                 latitude = cellId.location.lat;
                 longitude = cellId.location.lng;
                 accuracy = cellId.accuracy;
+                ipFlag = false;
                 txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
                 txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
+                txtIpFlag.setText(new StringBuilder().append("IP_FLAG = ").append(ipFlag).toString());
+                //Log.e("OVERRIDE SUCCESS","JUST FOR DEBUGGING");
             }
-
             @Override
             public void failure(RetrofitError error) {
-                Log.e("TESTE", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
+                ipFlag = true;
+                txtIpFlag.setText(new StringBuilder().append("IP_FLAG = ").append(ipFlag).toString());
+                //Log.e("ERROR1", error.getMessage() + "\nURL: " + error.getUrl());
+                //Log.e("OVERRIDE FAILURE","JUST FOR DEBUGGING");
+                service.geolocate( cellIdRequestParam_considerIpTrue , "AIzaSyChKotrFZAIXnWtyzg6NOmuYONb3ASom7A", new Callback<CellId>() {
+                    @Override
+                    public void success(CellId cellId, Response response) {
+                        latitude = cellId.location.lat;
+                        longitude = cellId.location.lng;
+                        accuracy = cellId.accuracy;
+                        txtLatLng.setText(new StringBuilder().append("Lat, Lng = ").append(cellId.location.lat).append(", ").append(cellId.location.lng).toString());
+                        txtAcc.setText(new StringBuilder().append("Precisão = ").append(cellId.accuracy).toString());
+                        //Log.e("OVERRIDE SUCCESS","JUST FOR DEBUGGING");
+                    }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        //Log.e("ERROR1", error.getMessage() + "\nURL: " + error.getUrl());
+                        //Log.e("OVERRIDE FAILURE","JUST FOR DEBUGGING");
+                    }
+                });
             }
         });
-
 
         RestAdapter adapter2 = new RestAdapter.Builder()
                 .setEndpoint("https://us1.unwiredlabs.com")
@@ -186,15 +206,13 @@ public class MainActivity extends AppCompatActivity {
 
                 txtLatLng2.setText(new StringBuilder().append("Lat, Lng = ").append(location2.lat).append(", ").append(location2.lon).toString());
                 txtAcc2.setText(new StringBuilder().append("Precisão = ").append(location2.accuracy).toString());
-                txtStatus2.setText(new StringBuilder().append("Status: ").append(status2).toString());
-                txtBalance2.setText(new StringBuilder().append("Balanço: ").append(balance2).toString());
                 txtAddress2.setText(new StringBuilder().append("Endereco: ").append(address2).toString());
                 txtMessage2.setText(new StringBuilder().append("Mensagem: ").append(message2).toString());
             }
 
             @Override
             public void failure(RetrofitError error) {
-                Log.e("ERROR OPEN CELLID", "ERRO: " + error.getMessage() + "\nURL: " + error.getUrl());
+                Log.e("ERROR", error.getMessage() + "\nURL: " + error.getUrl());
             }
         });
     }

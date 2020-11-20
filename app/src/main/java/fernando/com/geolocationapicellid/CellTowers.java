@@ -1,16 +1,18 @@
 package fernando.com.geolocationapicellid;
 
 public class CellTowers {
-    String cellID;
-    String locationAreaCode;
-    String mobileCountryCode;
-    String mobileNetworkCode;
+    int cellId;
+    int locationAreaCode;
+    int mobileCountryCode;
+    int mobileNetworkCode;
+    int signalStrength;
 
-    CellTowers(String cellID, String locationAreaCode, String mobileCountryCode, String mobileNetworkCode)
+    CellTowers(int cellId, int locationAreaCode, int mobileCountryCode, int mobileNetworkCode, int signalStrength)
     {
-        this.cellID = cellID;
+        this.cellId = cellId;
         this.locationAreaCode = locationAreaCode;
         this.mobileCountryCode = mobileCountryCode;
         this.mobileNetworkCode = mobileNetworkCode;
+        this.signalStrength = signalStrength;
     }
 }
