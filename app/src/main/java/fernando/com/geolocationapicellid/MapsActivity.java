@@ -1,14 +1,12 @@
 package fernando.com.geolocationapicellid;
 
-import android.graphics.Color;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -49,9 +47,9 @@ public class MapsActivity extends FragmentActivity {
         MarkerOptions mOptGps = new MarkerOptions().title("GPS").position(latLngGps);
         mMap.addMarker(mOptGps);
 
-        double latitudeCasa = -22.952722911612984;
+        /*double latitudeCasa = -22.952722911612984;
         double longitudeCasa =  -43.17694158745668;
-        LatLng latLngCasa = new LatLng(latitudeCasa, longitudeCasa);// TODO REMOVE THIS BEFORE TESTING OUTSIDE
+        LatLng latLngCasa = new LatLng(latitudeCasa, longitudeCasa);
 
         MarkerOptions mOptCasa = new MarkerOptions().title("Casa").position(latLngCasa).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         mMap.addMarker(mOptCasa);
@@ -61,9 +59,9 @@ public class MapsActivity extends FragmentActivity {
         LatLng latLngIME = new LatLng(latitudeIME, longitudeIME);
 
         MarkerOptions mOptIME = new MarkerOptions().title("IME").position(latLngIME).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-        mMap.addMarker(mOptIME);
+        mMap.addMarker(mOptIME);*/
 
-        // Instantiates a new CircleOptions object and defines the center and radius
+        /*// Instantiates a new CircleOptions object and defines the center and radius
         CircleOptions circleOptions = new CircleOptions()
                 .center(latLng)
                 .radius(accuracy)
@@ -73,7 +71,7 @@ public class MapsActivity extends FragmentActivity {
 
         // Get back the mutable Circle
         //Circle circle = mMap.addCircle(circleOptions);
-        mMap.addCircle(circleOptions);
+        mMap.addCircle(circleOptions);*/
 
         double latitudeERB1 = -22.9449694444444;
         double longitudeERB1 =  -44.5680555555556;
