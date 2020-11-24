@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity {
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class MapsActivity extends FragmentActivity {
         double latitudeGps = extras.getDouble("latitudeGps");
         double longitudeGps = extras.getDouble("longitudeGps");
 
-        int[] numEstacao = {
+        int[] numEstacaoBotafogo = {
                 403095573,
                 413581551,
                 413581888,
@@ -91,7 +91,7 @@ public class MapsActivity extends FragmentActivity {
                 1005136260
         };
 
-        double[] latitudeERB = {
+        double[] latitudeErbBotafogo = {
                 -22.9547,
                 -22.95118056,
                 -22.94564167,
@@ -152,7 +152,7 @@ public class MapsActivity extends FragmentActivity {
                 -22.82086111
         };
 
-        double[] longitudeERB = {
+        double[] longitudeErbBotafogo = {
             -43.1944,
             -43.17595,
             -43.18606111,
@@ -213,6 +213,27 @@ public class MapsActivity extends FragmentActivity {
             -43.3662
         };
 
+        int[] numEstacaoUrca ={
+            442502460,
+            684127369,
+            1000712084,
+            1002343167
+        };
+
+        double[] latitudeERBUrca ={
+                -22.944969444,
+                -22.952869444,
+                -22.942930556,
+                -22.954686111
+        };
+
+        double[] longitudeErbUrca = {
+                -43.16125,
+                -43.16890833,
+                -43.1568,
+                -43.16507778
+        };
+
         LatLng latLng = new LatLng(latitude, longitude);
         LatLng latLng2 = new LatLng(latitude2, longitude2);
         LatLng latLngGps = new LatLng(latitudeGps, longitudeGps);
@@ -230,9 +251,11 @@ public class MapsActivity extends FragmentActivity {
         MarkerOptions mOptGps = new MarkerOptions().title("GPS").position(latLngGps);
         mMap.addMarker(mOptGps);
 
-        for(int i=0; i<numEstacao.length; i++)
-            mMap.addMarker(new MarkerOptions().title(String.format("CellID: %d", numEstacao[i])).position(new LatLng(latitudeERB[i], longitudeERB[i])).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+        for(int i=0; i<numEstacaoBotafogo.length; i++)
+            mMap.addMarker(new MarkerOptions().title(String.format("CellID: %d", numEstacaoBotafogo[i])).position(new LatLng(latitudeErbBotafogo[i], longitudeErbBotafogo[i])).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+        for(int i=0; i<numEstacaoUrca.length; i++)
+            mMap.addMarker(new MarkerOptions().title(String.format("CellID: %d", numEstacaoUrca[i])).position(new LatLng(latitudeERBUrca[i], longitudeErbUrca[i])).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     @Override

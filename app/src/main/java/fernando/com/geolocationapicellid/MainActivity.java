@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,16 +19,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60; // 1 minute
@@ -96,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
         if (t.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
             final List<CellInfo> cellInfoList = t.getAllCellInfo();
             if (cellInfoList != null) {
-                Log.e("CELL INFO DEBUGGING", String.valueOf(cellInfoList));
+                //Log.e("CELL INFO DEBUGGING", String.valueOf(cellInfoList));
+
+                Log.e("CELL INFO DEBUGGING", Arrays.toString(cellInfoList.toArray()));
 
                 String networkOperator = t.getSimOperatorName();
 
@@ -124,35 +126,24 @@ public class MainActivity extends AppCompatActivity {
                 dbm = dbmList.get(0);
                 pci = pciList.get(0);
 
-                txtCid.setText(new StringBuilder().append("Cell ID (CID): ").append(cid).toString());
+                txtCid.setText(new StringBuilder().append("Cell ID: ").append(cid).toString());
                 txtLac.setText(new StringBuilder().append("Location Area Code (LAC): ").append(lac).toString());
                 txtMcc.setText(new StringBuilder().append("Mobile Country Code (MCC): ").append(mcc).toString());
                 txtMnc.setText(new StringBuilder().append("Mobile Network Code (MNC): ").append(mnc).toString());
                 txtDbm.setText(new StringBuilder().append("Potencia do Sinal (em dBm): ").append(dbm).toString());
-                txtPci.setText(new StringBuilder().append("PCI (PCI): ").append(pci).toString());
+                txtPci.setText(new StringBuilder().append("Physical Cell ID: ").append(pci).toString());
             }
         }
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        //locationGps = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         LocationListener listener = new LocationListener() {
 
             @Override
             public void onLocationChanged(Location locationGps) {
-                // A new location update is received.  Do something useful with it.  In this case,
-                // we're sending the update to a handler which then updates the UI with the new
-                // location.
                 latitudeGps = locationGps.getLatitude();
                 longitudeGps = locationGps.getLatitude();
             }

@@ -42,13 +42,13 @@
         android:textIsSelectable="true" />
 
     <TextView
-        android:id="@+id/txtDbm"
+        android:id="@+id/txtPci"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="-" />
 
     <TextView
-        android:id="@+id/txtPci"
+        android:id="@+id/txtDbm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="-" />
